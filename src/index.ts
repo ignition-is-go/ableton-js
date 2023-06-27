@@ -474,6 +474,7 @@ export class Ableton extends EventEmitter implements ConnectionEventEmitter {
               duration,
             });
           }
+          this.emit("command", { command, duration, result });
 
           this.setPing(
             duration,
