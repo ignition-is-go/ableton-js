@@ -142,6 +142,8 @@ export class Ableton extends EventEmitter implements ConnectionEventEmitter {
   private clientState: "closed" | "starting" | "started" = "closed";
   private cancelDisconnectEvent = false;
 
+  private _pingTable: { [k: string]: number } = {};
+
   constructor(private options?: AbletonOptions) {
     super();
 
@@ -347,8 +349,15 @@ export class Ableton extends EventEmitter implements ConnectionEventEmitter {
     return this.latency;
   }
 
-  private setPing(latency: number) {
+  getPingTable() {
+    return {
+      ...this._pingTable,
+    };
+  }
+
+  private setPing(latency: number, commandId: string) {
     this.latency = latency;
+    this._pingTable[commandId] = latency;
     this.emit("ping", this.latency);
   }
 
@@ -466,7 +475,10 @@ export class Ableton extends EventEmitter implements ConnectionEventEmitter {
             });
           }
 
-          this.setPing(duration);
+          this.setPing(
+            duration,
+            `${command.ns}.${command.name}.${command.args?.prop}`,
+          );
           clearTimeout(timeoutId);
           res(result);
         },
