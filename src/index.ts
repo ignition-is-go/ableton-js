@@ -106,6 +106,13 @@ export interface AbletonOptions {
   cacheOptions?: LruCache.Options<string, any>;
 
   /**
+   * If set to true, propListeners (from addPropListener or Namespace.addListner) will be replaced instead of added
+   * uniqueness is by 'ns', 'nsid' and 'prop'
+   * @default false
+   */
+  replaceListeners?: boolean;
+
+  /**
    * Set this to allow ableton-js to log messages. If you set this to
    * `console`, log messages are printed to the standard output.
    */
@@ -143,6 +150,11 @@ export class Ableton extends EventEmitter implements ConnectionEventEmitter {
   private cancelDisconnectEvent = false;
 
   private _pingTable: { [k: string]: number } = {};
+
+  private listenerCleanup = new Map<
+    string,
+    Set<() => Promise<boolean | undefined>>
+  >();
 
   constructor(private options?: AbletonOptions) {
     super();
@@ -553,7 +565,8 @@ export class Ableton extends EventEmitter implements ConnectionEventEmitter {
     nsid: string | undefined,
     prop: string,
     listener: (data: any) => any,
-  ) {
+    replaceListener?: boolean,
+  ): Promise<() => Promise<boolean | undefined>> {
     const eventId = v4();
     const result = await this.sendCommand({
       ns,
@@ -571,7 +584,23 @@ export class Ableton extends EventEmitter implements ConnectionEventEmitter {
       ]);
     }
 
-    return () => this.removePropListener(ns, nsid, prop, result, listener);
+    const cleanupFunc = () =>
+      this.removePropListener(ns, nsid, prop, result, listener);
+
+    const key = `${ns}.${nsid}.${prop}`;
+
+    if (!this.listenerCleanup.has(key)) {
+      this.listenerCleanup.set(key, new Set());
+    }
+
+    if (replaceListener ?? this.options?.replaceListeners ?? false) {
+      const existingCleanup = this.listenerCleanup.get(key);
+      existingCleanup?.forEach((c) => c());
+    }
+
+    this.listenerCleanup.get(key)?.add(cleanupFunc);
+
+    return cleanupFunc;
   }
 
   async removePropListener(
