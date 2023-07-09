@@ -12,15 +12,11 @@ class DrumPad(Interface):
         return {
             "id": DrumPad_id,
             "name": DrumPad.name,
-            # "type": str(DrumPad.type),
-            "class_name": DrumPad.class_name,
+            "note": DrumPad.note
         }
 
     def __init__(self, c_instance, socket):
         super(DrumPad, self).__init__(c_instance, socket)
 
-    def getChains(self, ns):
+    def get_chains(self, ns):
         return map(Chain.serialize_chain, ns.chains)
-
-    # def get_type(self, ns):
-    #     return str(ns.type)

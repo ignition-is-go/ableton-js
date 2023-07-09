@@ -13,11 +13,11 @@ class Chain (Interface):
         return {
             "id":chain_id,
             "name": chain.name,
-            "devices": chain.devices,
-            "mixer_device": chain.mixer_device,
-            "mute": chain.mute,
-            "muted_via_solo": chain.muted_via_solo,
-            "solo": chain.solo
+            # "devices": chain.devices,
+            # "mixer_device": chain.mixer_device,
+            # "mute": chain.mute,
+            # "muted_via_solo": chain.muted_via_solo,
+            # "solo": chain.solo
         }
     
     def __init__(self, c_instance, socket):
