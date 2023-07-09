@@ -15,12 +15,12 @@ class ChainMixerDevice (Interface):
           "id":chainMixerDevice_id,
           "name": chainMixerDevice.name,
           "chain_activator": chainMixerDevice.chain_activator,
-          "panning": chainMixerDevice.panning;
-          "sends": chainMixerDevice.sends;
-          "volume": chainMixerDevice.volume;
+          "panning": chainMixerDevice.panning,
+          "sends": chainMixerDevice.sends,
+          "volume": chainMixerDevice.volume,
       }
   def __init__(self, c_instance, socket):
-        super(chainMixerDevice, self).__init__(c_instance, socket)
+        super(ChainMixerDevice, self).__init__(c_instance, socket)
 
 def getParameters(self, ns): 
-    return map(Device.serialize_device, ns.devices)
+    return map(DeviceParameter.serialize_device, ns.devices)
