@@ -1,7 +1,8 @@
 from __future__ import absolute_import
 from .Interface import Interface
-from .Device import Device
-from.MixerDevice import MixerDevice
+from .DeviceParameter import DeviceParameter
+
+
 
 class ChainMixerDevice (Interface):
 
@@ -13,17 +14,13 @@ class ChainMixerDevice (Interface):
       return {
           "id":chainMixerDevice_id,
           "name": chainMixerDevice.name,
-          "mixer_device": chainMixerDevice.mixer_device,
-          "devices": chainMixerDevice.devices
+          "chain_activator": chainMixerDevice.chain_activator,
+          "panning": chainMixerDevice.panning;
+          "sends": chainMixerDevice.sends;
+          "volume": chainMixerDevice.volume;
       }
   def __init__(self, c_instance, socket):
         super(chainMixerDevice, self).__init__(c_instance, socket)
 
-  def get_devices(self,ns):
-      return map(Device.serialize_device, ns.devices)
-
-#   def get_mixer_device(self, ns):
-#     return MixerDevice.serialize_mixer_device(ns.mixer_device)
-
-
-
+def getParameters(self, ns): 
+    return map(Device.serialize_device, ns.devices)
