@@ -21,6 +21,8 @@ from .Midi import Midi
 from .Chain import Chain
 from .DrumChain import DrumChain
 from .RackDevice import RackDevice
+from .ChainMixerDevice import ChainMixerDevice
+from .DrumPad import DrumPad
 
 from _Framework.ControlSurface import ControlSurface
 import Live
@@ -52,9 +54,11 @@ class AbletonJS(ControlSurface):
             "track": Track(c_instance, self.socket),
             "clip_slot": ClipSlot(c_instance, self.socket),
             "clip": Clip(c_instance, self.socket),
+            "rack-device": RackDevice(c_instance, self.socket),
             "chain": Chain(c_instance, self.socket),
-            "drumChain": DrumChain(c_instance, self.socket),
-            "rackDevice": RackDevice(c_instance, self.socket)
+            "drum-chain": DrumChain(c_instance, self.socket),
+            "chain-mixer-device": ChainMixerDevice(c_instance, self.socket),
+            "drum-pad": DrumPad(c_instance, self.socket)
         }
 
         self.recv_loop = Live.Base.Timer(
