@@ -12,12 +12,7 @@ class Chain (Interface):
         chain_id = Interface.save_obj(chain)
         return {
             "id":chain_id,
-            "name": chain.name,
-            # "devices": chain.devices,
-            # "mixer_device": chain.mixer_device,
-            # "mute": chain.mute,
-            # "muted_via_solo": chain.muted_via_solo,
-            # "solo": chain.solo
+            "name": chain.name
         }
     
     def __init__(self, c_instance, socket):

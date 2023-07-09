@@ -12,9 +12,7 @@ class DrumChain (Interface):
       drumChain_id = Interface.save_obj(drumChain)
       return {
           "id":drumChain_id,
-          "name": drumChain.name,
-          "mixer_device": chain.mixer_device,
-          "devices": drumChain.devices
+          "name": drumChain.name
       }
   def __init__(self, c_instance, socket):
         super(DrumChain, self).__init__(c_instance, socket)
