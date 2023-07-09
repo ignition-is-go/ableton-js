@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 from .Interface import Interface
 from .Chain import Chain
+from .DrumPad import DrumPad
 
 class RackDevice (Interface):
     
@@ -12,14 +13,18 @@ class RackDevice (Interface):
         return {
             "id": rack_id,
             "name":rack.name,
-            "class_name": rack.class_name,
-            "chains": rack.chains,
-            "return_chains": rack.return_chains,
-            "has_macro_mappings": rack.has_macro_mappings
+            "class_name": rack.class_name
         }
-    
-    def get_chains(self, ns):
-        return map(Chain.serialize_chain, ns.chains)
-
     def __init__(self, c_instance, socket):
         super(RackDevice, self).__init__(c_instance, socket)
+
+    def get_chains(self, ns):
+        return map(Chain.serialize_chain, ns.chains)
+    
+    def get_drum_pads(self, ns):
+        return map(DrumPad.serialize_drum_pad, ns.drum_pads)
+    
+    # def get_return_chains(self, ns): 
+    #     return map(Chain.serialize_chain, ns.return_chains )
+    
+

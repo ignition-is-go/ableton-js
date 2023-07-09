@@ -4,7 +4,7 @@ from .Chain import Chain
 
 class DrumPad(Interface):
     @staticmethod
-    def serialize_DrumPad(DrumPad):
+    def serialize_drum_pad(DrumPad):
         if DrumPad is None:
             return None
 

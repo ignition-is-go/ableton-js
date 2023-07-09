@@ -14,10 +14,6 @@ class ChainMixerDevice (Interface):
       return {
           "id":chainMixerDevice_id,
           "name": chainMixerDevice.name
-        #   "chain_activator": chainMixerDevice.chain_activator,
-        #   "panning": chainMixerDevice.panning,
-        #   "sends": chainMixerDevice.sends,
-        #   "volume": chainMixerDevice.volume
       }
   def __init__(self, c_instance, socket):
         super(ChainMixerDevice, self).__init__(c_instance, socket)
