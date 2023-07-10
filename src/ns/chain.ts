@@ -1,6 +1,6 @@
 import { Ableton } from "..";
 import { Namespace } from ".";
-import { Device, RawDevice } from ".";
+import { Device, RawDevice } from "./device";
 import { ChainMixerDevice, RawChainMixerDevice } from "./chain-mixer-device";
 
 export interface GettableProperties {
@@ -39,9 +39,6 @@ export interface ObservableProperties {
 export interface RawChain {
   id: string;
   name: string;
-  // note: string;
-  // type: DrumChainType;
-  // class_name: string;
 }
 
 export class Chain extends Namespace<
@@ -55,7 +52,8 @@ export class Chain extends Namespace<
 
     this.transformers = {
       devices: (devices) => devices.map((d) => new Device(ableton, d)),
-      mixer_device: new ChainMixerDevice(ableton, mixer_device),
+      mixer_device: (mixer_device) =>
+        new ChainMixerDevice(ableton, mixer_device),
     };
 
     // this.cachedProps = {

@@ -14,7 +14,7 @@ export interface GettableProperties {
   has_midi_output: boolean;
   is_auto_colored: boolean;
   devices: RawDevice[];
-  mixerDevice: RawChainMixerDevice;
+  mixer_device: RawChainMixerDevice;
   mute: boolean;
   muted_via_solo: boolean;
   name: string;
