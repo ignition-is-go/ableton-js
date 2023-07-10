@@ -1,7 +1,7 @@
 import { Ableton } from "..";
 import { Namespace } from ".";
 import { Device, RawDevice } from "./device";
-import { Chain } from "./chain";
+// import { Chain } from "./chain";
 import { ChainMixerDevice, RawChainMixerDevice } from "./chain-mixer-device";
 // import { DrumPad } from "./DrumPad";
 import { RawDeviceParameter, DeviceParameter } from "./device-parameter";
@@ -60,14 +60,14 @@ export class DrumChain extends Namespace<
   ObservableProperties
 > {
   constructor(ableton: Ableton, public raw: RawDrumChain) {
-    super(ableton, "DrumChain", raw.id);
+    super(ableton, "drum-chain", raw.id);
 
-    this.transformers = {
-      parameters: (ps) => ps.map((p) => new DeviceParameter(ableton, p)),
-    };
+    // this.transformers = {
+    //   parameters: (ps) => ps.map((p) => new DeviceParameter(ableton, p)),
+    // };
 
-    this.cachedProps = {
-      parameters: true,
-    };
+    // this.cachedProps = {
+    //   parameters: true,
+    // };
   }
 }

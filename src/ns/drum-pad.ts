@@ -1,22 +1,23 @@
 import { Ableton } from "..";
 import { Namespace } from ".";
+import { Chain, RawChain } from "./chain";
 
 export interface GettableProperties {}
 
 export interface TransformedProperties {}
 
 export interface SettableProperties {
-  // name: string;
-  // is_active: boolean;
+  name: string;
+  is_active: boolean;
 }
 
 export interface ObservableProperties {
-  // is_active: boolean;
-  // name: string;
-  // parameters: string;
+  is_active: boolean;
+  name: string;
+  parameters: string;
 }
 
-export interface RawChain {
+export interface RawDrumPad {
   id: string;
   name: string;
   // note: string;
@@ -24,14 +25,14 @@ export interface RawChain {
   // class_name: string;
 }
 
-export class Chain extends Namespace<
+export class DrumPad extends Namespace<
   GettableProperties,
   TransformedProperties,
   SettableProperties,
   ObservableProperties
 > {
-  constructor(ableton: Ableton, public raw: RawChain) {
-    super(ableton, "chain", raw.id);
+  constructor(ableton: Ableton, public raw: RawDrumPad) {
+    super(ableton, "drum-pads", raw.id);
 
     // this.transformers = {
     //   parameters: (ps) => ps.map((p) => new DrumChainParameter(ableton, p)),
