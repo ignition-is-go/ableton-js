@@ -24,7 +24,7 @@ class RackDevice (Interface):
     def get_drum_pads(self, ns):
         return map(DrumPad.serialize_drum_pad, ns.drum_pads)
     
-    # def get_return_chains(self, ns): 
-    #     return map(Chain.serialize_chain, ns.return_chains )
+    def get_return_chains(self, ns): 
+        return map(Chain.serialize_chain, ns.return_chains )
     
 

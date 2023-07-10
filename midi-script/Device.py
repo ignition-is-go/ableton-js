@@ -25,3 +25,6 @@ class Device(Interface):
 
     def get_type(self, ns):
         return str(ns.type)
+    
+    def get_class_name(self, ns):
+        return str(ns.class_name)
