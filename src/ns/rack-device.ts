@@ -1,8 +1,8 @@
 import { Ableton } from "..";
 import { Namespace } from ".";
-import { Device, RawDevice } from "./device";
+// import { Device, RawDevice } from "./device";
 import { Chain, RawChain } from "./chain";
-import { DrumChain } from "./drum-chain";
+// import { DrumChain } from "./drum-chain";
 // import { ChainMixerDevice, RawChainMixerDevice } from "./chain-mixer-device";
 import { DrumPad, RawDrumPad } from "./drum-pad";
 import { RawDeviceParameter, DeviceParameter } from "./device-parameter";
