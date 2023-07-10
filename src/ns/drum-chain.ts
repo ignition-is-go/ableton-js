@@ -1,16 +1,12 @@
 import { Ableton } from "..";
 import { Namespace } from ".";
 import { Device, RawDevice } from "./device";
-// import { Chain } from "./chain";
 import { ChainMixerDevice, RawChainMixerDevice } from "./chain-mixer-device";
-// import { DrumPad } from "./DrumPad";
-import { RawDeviceParameter, DeviceParameter } from "./device-parameter";
-import { Color } from "../util/color";
 
 export interface GettableProperties {
   // canonical_parent: string;
-  choke_group: string;
-  color: number;
+  // choke_group: string;
+  // color: number;
   color_index: number;
   has_audio_input: boolean;
   has_audio_output: boolean;
@@ -18,7 +14,7 @@ export interface GettableProperties {
   has_midi_output: boolean;
   is_auto_colored: boolean;
   devices: RawDevice[];
-  mixerDevice: RawChainMixerDevice[];
+  mixerDevice: RawChainMixerDevice;
   mute: boolean;
   muted_via_solo: boolean;
   name: string;
@@ -39,19 +35,19 @@ export interface ObservableProperties {
 }
 
 export interface TransformedProperties {
-  // parameters: RawChainMixerDevice[];
+  mixer_device: ChainMixerDevice;
+  devices: Device[];
 }
 
 export interface SettableProperties {
   name: string;
-  is_active: boolean;
+  solo: number;
+  mute: boolean;
 }
 
 export interface RawDrumChain {
   id: string;
   name: string;
-  // type: DeviceType;
-  // class_name: string;
 }
 export class DrumChain extends Namespace<
   GettableProperties,
@@ -62,9 +58,11 @@ export class DrumChain extends Namespace<
   constructor(ableton: Ableton, public raw: RawDrumChain) {
     super(ableton, "drum-chain", raw.id);
 
-    // this.transformers = {
-    //   parameters: (ps) => ps.map((p) => new DeviceParameter(ableton, p)),
-    // };
+    this.transformers = {
+      devices: (ds) => ds.map((d) => new Device(ableton, d)),
+      mixer_device: (mixer_device) =>
+        new ChainMixerDevice(ableton, mixer_device),
+    };
 
     // this.cachedProps = {
     //   parameters: true,

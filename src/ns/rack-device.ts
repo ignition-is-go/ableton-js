@@ -1,7 +1,7 @@
 import { Ableton } from "..";
 import { Namespace } from ".";
 import { Device, RawDevice } from "./device";
-import { Chain } from "./chain";
+import { Chain, RawChain } from "./chain";
 import { DrumChain } from "./drum-chain";
 import { ChainMixerDevice, RawChainMixerDevice } from "./chain-mixer-device";
 // import { DrumPad } from "./DrumPad";
@@ -23,7 +23,7 @@ export interface GettableProperties {
   macros_mapped: boolean;
   name: string;
   parameters: RawChainMixerDevice[];
-  // return_chains: Chain[];
+  return_chains: Chain[];
   selected_variation_index: number;
   // type: string;
   variation_count: number;
@@ -44,9 +44,7 @@ export interface ObservableProperties {
   // visible_drum_pads: DrumPad[];
 }
 
-export interface TransformedProperties {
-  parameters: RawChainMixerDevice[];
-}
+export interface TransformedProperties {}
 
 export interface SettableProperties {
   name: string;
@@ -68,9 +66,9 @@ export class RackDevice extends Namespace<
   constructor(ableton: Ableton, public raw: RawRackDevice) {
     super(ableton, "rackDevice", raw.id);
 
-    this.transformers = {
-      parameters: (ps) => ps.map((p) => new DeviceParameter(ableton, p)),
-    };
+    // this.transformers = {
+    //   parameters: (ps) => ps.map((p) => new DeviceParameter(ableton, p)),
+    // };
 
     this.cachedProps = {
       parameters: true,
