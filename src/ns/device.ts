@@ -1,6 +1,7 @@
 import { Ableton } from "..";
 import { Namespace } from ".";
 import { RawDeviceParameter, DeviceParameter } from "./device-parameter";
+import { RawChain, Chain } from "./chain";
 
 export interface GettableProperties {
   can_have_chains: boolean;
@@ -11,10 +12,12 @@ export interface GettableProperties {
   name: string;
   parameters: RawDeviceParameter[];
   type: DeviceType;
+  chains: RawChain[];
 }
 
-export interface TransformedProperties {
+export default interface TransformedProperties {
   parameters: DeviceParameter[];
+  chains: Chain[];
 }
 
 export interface SettableProperties {
@@ -26,6 +29,7 @@ export interface ObservableProperties {
   is_active: boolean;
   name: string;
   parameters: string;
+  chains: RawChain[];
 }
 
 export interface RawDevice {
@@ -53,6 +57,7 @@ export class Device extends Namespace<
 
     this.transformers = {
       parameters: (ps) => ps.map((p) => new DeviceParameter(ableton, p)),
+      chains: (cs) => cs.map((c) => new Chain(ableton, c)),
     };
 
     this.cachedProps = {

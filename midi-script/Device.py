@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 from .Interface import Interface
 from .DeviceParameter import DeviceParameter
+from .Chain import Chain
 
 
 class Device(Interface):
@@ -22,6 +23,9 @@ class Device(Interface):
 
     def get_parameters(self, ns):
         return map(DeviceParameter.serialize_device_parameter, ns.parameters)
+    
+    def get_chains(self, ns):
+        return map(Chain.serialize_chain, ns.chains)
 
     def get_type(self, ns):
         return str(ns.type)

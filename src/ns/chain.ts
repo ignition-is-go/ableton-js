@@ -31,9 +31,9 @@ export interface SettableProperties {
 }
 
 export interface ObservableProperties {
-  // is_active: boolean;
-  // name: string;
-  // parameters: string;
+  is_active: boolean;
+  name: string;
+  parameters: string;
 }
 
 export interface RawChain {
