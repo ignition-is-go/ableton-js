@@ -2,6 +2,7 @@ import { Ableton } from "..";
 import { Namespace } from ".";
 import { RawDeviceParameter, DeviceParameter } from "./device-parameter";
 import { RawChain, Chain } from "./chain";
+import { RawDrumPad, DrumPad } from "./drum-pad";
 
 export interface GettableProperties {
   can_have_chains: boolean;
@@ -13,11 +14,13 @@ export interface GettableProperties {
   parameters: RawDeviceParameter[];
   type: DeviceType;
   chains: RawChain[];
+  drum_pads: RawDrumPad[];
 }
 
 export default interface TransformedProperties {
   parameters: DeviceParameter[];
   chains: Chain[];
+  drum_pads: DrumPad[];
 }
 
 export interface SettableProperties {
@@ -30,6 +33,7 @@ export interface ObservableProperties {
   name: string;
   parameters: string;
   chains: RawChain[];
+  drum_pads: DrumPad[];
 }
 
 export interface RawDevice {
@@ -58,6 +62,7 @@ export class Device extends Namespace<
     this.transformers = {
       parameters: (ps) => ps.map((p) => new DeviceParameter(ableton, p)),
       chains: (cs) => cs.map((c) => new Chain(ableton, c)),
+      drum_pads: (ds) => ds.map((d) => new DrumPad(ableton, d)),
     };
 
     this.cachedProps = {

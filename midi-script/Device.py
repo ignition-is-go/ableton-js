@@ -2,7 +2,8 @@ from __future__ import absolute_import
 from .Interface import Interface
 from .DeviceParameter import DeviceParameter
 from .Chain import Chain
-
+from .DrumPad import DrumPad
+# from .DrumChain import DrumChain
 
 class Device(Interface):
     @staticmethod
@@ -35,3 +36,10 @@ class Device(Interface):
     
     def get_name(self, ns):
         return str(ns.name)
+        
+    def get_drum_pads(self, ns):
+        return map(DrumPad.serialize_drum_pad, ns.drum_pads)
+    
+    def get_return_chains(self, ns): 
+        return map(Chain.serialize_chain, ns.return_chains )
+    

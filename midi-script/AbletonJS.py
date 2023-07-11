@@ -20,7 +20,6 @@ from .Clip import Clip
 from .Midi import Midi
 from .Chain import Chain
 from .DrumChain import DrumChain
-from .RackDevice import RackDevice
 from .ChainMixerDevice import ChainMixerDevice
 from .DrumPad import DrumPad
 
@@ -54,7 +53,6 @@ class AbletonJS(ControlSurface):
             "track": Track(c_instance, self.socket),
             "clip_slot": ClipSlot(c_instance, self.socket),
             "clip": Clip(c_instance, self.socket),
-            "rack-device": RackDevice(c_instance, self.socket),
             "chain": Chain(c_instance, self.socket),
             "drum-chain": DrumChain(c_instance, self.socket),
             "chain-mixer-device": ChainMixerDevice(c_instance, self.socket),

@@ -3,7 +3,6 @@ from __future__ import absolute_import
 from .Interface import Interface
 from .MixerDevice import MixerDevice
 from .Device import Device
-from .RackDevice import RackDevice
 from .Clip import Clip
 from .ClipSlot import ClipSlot
 
