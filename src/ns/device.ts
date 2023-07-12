@@ -14,12 +14,14 @@ export interface GettableProperties {
   parameters: RawDeviceParameter[];
   type: DeviceType;
   chains: RawChain[];
+  return_chains: RawChain[];
   drum_pads: RawDrumPad[];
 }
 
 export default interface TransformedProperties {
   parameters: DeviceParameter[];
   chains: Chain[];
+  return_chains: Chain[];
   drum_pads: DrumPad[];
 }
 
@@ -33,7 +35,8 @@ export interface ObservableProperties {
   name: string;
   parameters: string;
   chains: RawChain[];
-  drum_pads: DrumPad[];
+  drum_pads: RawDrumPad[];
+  return_chains: RawChain[];
 }
 
 export interface RawDevice {
@@ -62,6 +65,7 @@ export class Device extends Namespace<
     this.transformers = {
       parameters: (ps) => ps.map((p) => new DeviceParameter(ableton, p)),
       chains: (cs) => cs.map((c) => new Chain(ableton, c)),
+      return_chains: (cs) => cs.map((c) => new Chain(ableton, c)),
       drum_pads: (ds) => ds.map((d) => new DrumPad(ableton, d)),
     };
 

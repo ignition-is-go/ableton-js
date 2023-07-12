@@ -3,7 +3,6 @@ from .Interface import Interface
 from .DeviceParameter import DeviceParameter
 from .Chain import Chain
 from .DrumPad import DrumPad
-# from .DrumChain import DrumChain
 
 class Device(Interface):
     @staticmethod
@@ -27,6 +26,9 @@ class Device(Interface):
     
     def get_chains(self, ns):
         return map(Chain.serialize_chain, ns.chains)
+        
+    def get_return_chains(self, ns): 
+        return map(Chain.serialize_chain, ns.return_chains )
 
     def get_type(self, ns):
         return str(ns.type)
@@ -39,7 +41,4 @@ class Device(Interface):
         
     def get_drum_pads(self, ns):
         return map(DrumPad.serialize_drum_pad, ns.drum_pads)
-    
-    def get_return_chains(self, ns): 
-        return map(Chain.serialize_chain, ns.return_chains )
     

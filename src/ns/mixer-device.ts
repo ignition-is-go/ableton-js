@@ -53,6 +53,7 @@ export interface ObservableProperties {
 export interface RawMixerDevice {
   id: string;
   volume: string;
+  name: string;
 }
 
 export class MixerDevice extends Namespace<

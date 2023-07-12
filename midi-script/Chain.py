@@ -1,7 +1,8 @@
 from __future__ import absolute_import
 from .Interface import Interface
 from .Device import Device
-from .ChainMixerDevice import ChainMixerDevice
+from .MixerDevice import MixerDevice
+
 
 class Chain (Interface):
     
@@ -22,4 +23,4 @@ class Chain (Interface):
         return map(Device.serialize_device, ns.devices)
     
     def get_mixer_device(self, ns):
-        return map(ChainMixerDevice.serialize_ChainMixerDevice, ns.mixer_device)
+        return map(MixerDevice.serialize_MixerDevice, ns.mixer_device)

@@ -54,8 +54,6 @@ class AbletonJS(ControlSurface):
             "clip_slot": ClipSlot(c_instance, self.socket),
             "clip": Clip(c_instance, self.socket),
             "chain": Chain(c_instance, self.socket),
-            "drum-chain": DrumChain(c_instance, self.socket),
-            "chain-mixer-device": ChainMixerDevice(c_instance, self.socket),
             "drum-pad": DrumPad(c_instance, self.socket)
         }
 
