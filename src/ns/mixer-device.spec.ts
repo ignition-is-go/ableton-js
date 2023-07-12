@@ -8,7 +8,6 @@ const gettableProps: (keyof GettableProperties)[] = [
   "cue_volume",
   "left_split_stereo",
   "panning",
-  "panning_mode",
   "right_split_stereo",
   "sends",
   "song_tempo",

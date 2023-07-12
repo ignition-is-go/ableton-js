@@ -12,7 +12,7 @@ export interface GettableProperties {
   has_midi_input: boolean;
   has_midi_output: boolean;
   is_auto_colored: boolean;
-  mixer_device: RawMixerDevice;
+  mixer_device: RawMixerDevice[];
   mute: boolean;
   muted_via_solo: boolean;
   name: string;
@@ -21,7 +21,7 @@ export interface GettableProperties {
 
 export interface TransformedProperties {
   devices: Device[];
-  mixer_device: MixerDevice;
+  mixer_device: MixerDevice[];
 }
 
 export interface SettableProperties {
@@ -34,7 +34,7 @@ export interface ObservableProperties {
   is_active: boolean;
   name: string;
   parameters: string;
-  mixer_device: RawMixerDevice;
+  mixer_device: RawMixerDevice[];
 }
 
 export interface RawChain {
@@ -53,7 +53,8 @@ export class Chain extends Namespace<
 
     this.transformers = {
       devices: (devices) => devices.map((d) => new Device(ableton, d)),
-      mixer_device: (mixer_device) => new MixerDevice(ableton, mixer_device),
+      mixer_device: (mixer_device) =>
+        mixer_device.map((md) => new MixerDevice(ableton, md)),
     };
 
     // this.cachedProps = {
