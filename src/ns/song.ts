@@ -5,6 +5,7 @@ import { CuePoint, RawCuePoint } from "./cue-point";
 import { SongView } from "./song-view";
 import { Scene, RawScene } from "./scene";
 import { RawDevice } from "./device";
+import { MixerDevice } from "./mixer-device";
 
 export interface GettableProperties {
   appointed_device: RawDevice;

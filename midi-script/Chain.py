@@ -12,7 +12,7 @@ class Chain (Interface):
             return None
         chain_id = Interface.save_obj(chain)
         return {
-            "id":chain_id,
+            "id": chain_id,
             "name": chain.name
         }
     

@@ -17,6 +17,7 @@ export interface GettableProperties {
   muted_via_solo: boolean;
   name: string;
   solo: number;
+  note_out: string;
 }
 
 export interface TransformedProperties {
@@ -35,6 +36,7 @@ export interface ObservableProperties {
   name: string;
   parameters: string;
   mixer_device: RawMixerDevice[];
+  note_out: string;
 }
 
 export interface RawChain {
@@ -57,8 +59,9 @@ export class Chain extends Namespace<
         mixer_device.map((md) => new MixerDevice(ableton, md)),
     };
 
-    // this.cachedProps = {
-    //   parameters: true,
-    // };
+    this.cachedProps = {
+      devices: true,
+      mixer_device: true,
+    };
   }
 }

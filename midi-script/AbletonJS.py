@@ -19,8 +19,6 @@ from .ClipSlot import ClipSlot
 from .Clip import Clip
 from .Midi import Midi
 from .Chain import Chain
-from .DrumChain import DrumChain
-from .ChainMixerDevice import ChainMixerDevice
 from .DrumPad import DrumPad
 
 from _Framework.ControlSurface import ControlSurface
