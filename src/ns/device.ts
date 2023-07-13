@@ -64,13 +64,19 @@ export class Device extends Namespace<
 
     this.transformers = {
       parameters: (ps) => ps.map((p) => new DeviceParameter(ableton, p)),
-      chains: (cs) => cs.map((c) => new Chain(ableton, c)),
+      chains: (cs) => {
+        console.log(cs);
+        return cs.map((c) => new Chain(ableton, c));
+      },
       return_chains: (cs) => cs.map((c) => new Chain(ableton, c)),
       drum_pads: (ds) => ds.map((d) => new DrumPad(ableton, d)),
     };
 
     this.cachedProps = {
       parameters: true,
+      chains: true,
+      return_chains: true,
+      drum_pads: true,
     };
   }
 }
