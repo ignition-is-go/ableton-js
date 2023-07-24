@@ -191,7 +191,10 @@ export class Track extends Namespace<
       arrangement_clips: (clips: RawClip[]) =>
         clips.map((clip) => new Clip(ableton, clip)),
       color: (c) => new Color(c),
-      devices: (devices) => devices.map((d) => new Device(ableton, d)),
+      devices: (devices) => {
+        console.log(devices);
+        return devices.map((d) => new Device(ableton, d));
+      },
       clip_slots: (clip_slots) =>
         clip_slots.map((c) => new ClipSlot(ableton, c)),
       mixer_device: (mixer_device) => new MixerDevice(ableton, mixer_device),

@@ -18,6 +18,8 @@ from .Internal import Internal
 from .ClipSlot import ClipSlot
 from .Clip import Clip
 from .Midi import Midi
+from .Chain import Chain
+from .DrumPad import DrumPad
 
 from _Framework.ControlSurface import ControlSurface
 import Live
@@ -49,6 +51,8 @@ class AbletonJS(ControlSurface):
             "track": Track(c_instance, self.socket),
             "clip_slot": ClipSlot(c_instance, self.socket),
             "clip": Clip(c_instance, self.socket),
+            "chain": Chain(c_instance, self.socket),
+            "drum-pad": DrumPad(c_instance, self.socket)
         }
 
         self.recv_loop = Live.Base.Timer(
