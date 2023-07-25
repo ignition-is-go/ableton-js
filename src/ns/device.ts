@@ -16,6 +16,7 @@ export interface GettableProperties {
   chains: RawChain[];
   return_chains: RawChain[];
   drum_pads: RawDrumPad[];
+  pressed_pads: [];
 }
 
 export default interface TransformedProperties {
@@ -37,6 +38,7 @@ export interface ObservableProperties {
   chains: RawChain[];
   drum_pads: RawDrumPad[];
   return_chains: RawChain[];
+  pressed_pads: [];
 }
 
 export interface RawDevice {
