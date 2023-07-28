@@ -48,6 +48,14 @@ export interface ObservableProperties {
   crossfade_assign: CrossfadeAssignment;
   // panning_mode: string;
   sends: RawDeviceParameter[];
+  volume: RawDeviceParameter;
+  panning: RawDeviceParameter;
+  left_split_stereo: RawDeviceParameter;
+  right_split_stereo: RawDeviceParameter;
+  cue_volume: RawDeviceParameter;
+  crossfader: RawDeviceParameter;
+  song_tempo: RawDeviceParameter;
+  track_activator: RawDeviceParameter;
 }
 
 export interface RawMixerDevice {
