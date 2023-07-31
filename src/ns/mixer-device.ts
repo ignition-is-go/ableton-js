@@ -41,7 +41,13 @@ export interface TransformedProperties {
 
 export interface SettableProperties {
   crossfade_assign: CrossfadeAssignment;
-  // panning_mode: string;
+  volume: DeviceParameter;
+  panning: DeviceParameter;
+  crossfader: DeviceParameter;
+  cue_volume: DeviceParameter;
+  sends: DeviceParameter[];
+  song_tempo: DeviceParameter;
+  track_activator: DeviceParameter;
 }
 
 export interface ObservableProperties {
