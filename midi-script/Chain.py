@@ -30,6 +30,7 @@ class Chain (Interface):
     def serialize_mixer_device(mixer_device):
         if mixer_device is None:
             return None
+        
         mixer_id = Interface.save_obj(mixer_device)
         return {"id": mixer_id, "name": 'chainMixer'}
         
