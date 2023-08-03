@@ -1,11 +1,14 @@
 from __future__ import absolute_import
+import time
 
 from .version import version
-from .Config import DEBUG
+from .Config import DEBUG, FAST_POLLING
 from .Socket import Socket
 from .Interface import Interface
 from .Application import Application
 from .ApplicationView import ApplicationView
+from .Browser import Browser
+from .BrowserItem import BrowserItem
 from .CuePoint import CuePoint
 from .Device import Device
 from .DeviceParameter import DeviceParameter
@@ -39,6 +42,8 @@ class AbletonJS(ControlSurface):
         self.handlers = {
             "application": Application(c_instance, self.socket, self.application()),
             "application-view": ApplicationView(c_instance, self.socket, self.application()),
+            "browser": Browser(c_instance, self.socket, self.application()),
+            "browser-item": BrowserItem(c_instance, self.socket),
             "cue-point": CuePoint(c_instance, self.socket),
             "device": Device(c_instance, self.socket),
             "device-parameter": DeviceParameter(c_instance, self.socket),
@@ -55,10 +60,32 @@ class AbletonJS(ControlSurface):
             "drum-pad": DrumPad(c_instance, self.socket)
         }
 
-        self.recv_loop = Live.Base.Timer(
-            callback=self.socket.process, interval=10, repeat=True)
+        self._last_tick = time.time() * 1000
+        self.tick()
 
-        self.recv_loop.start()
+        if FAST_POLLING:
+            self.recv_loop = Live.Base.Timer(
+                callback=self.socket.process, interval=10, repeat=True)
+
+            self.recv_loop.start()
+
+    def tick(self):
+        tick_time = time.time() * 1000
+
+        if tick_time - self._last_tick > 200:
+            self.log_message("UDP tick is lagging, delta: " +
+                             str(round(tick_time - self._last_tick)) + "ms")
+
+        self._last_tick = tick_time
+        self.socket.process()
+
+        process_time = time.time() * 1000
+
+        if process_time - tick_time > 100:
+            self.log_message("UDP processing is taking long, delta: " +
+                             str(round(tick_time - process_time)) + "ms")
+
+        self.schedule_message(1, self.tick)
 
     def build_midi_map(self, midi_map_handle):
         script_handle = self._c_instance.handle()
@@ -75,7 +102,8 @@ class AbletonJS(ControlSurface):
 
     def disconnect(self):
         self.log_message("Disconnecting")
-        self.recv_loop.stop()
+        if FAST_POLLING:
+            self.recv_loop.stop()
         self.socket.send("disconnect")
         self.socket.shutdown()
         Interface.listeners.clear()
