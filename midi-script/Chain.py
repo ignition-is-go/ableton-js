@@ -44,7 +44,7 @@ class Chain (Interface):
     # def get_mixer_device(self, ns):
     #  return Chain.serialize_mixer_device, ns.mixer_device
     def get_mixer_device(self, ns):
-        return MixerDevice.serialize_mixer_device, ns.mixer_device
+        return Chain.serialize_mixer_device, ns.mixer_device
     
     def get_sends(self, ns):
        return map(DeviceParameter.serialize_device_parameter, ns.sends)
