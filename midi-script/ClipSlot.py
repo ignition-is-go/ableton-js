@@ -30,3 +30,7 @@ class ClipSlot(Interface):
 
     def duplicate_clip_to(self, ns, slot_id):
         return ns.duplicate_clip_to(Interface.get_obj(slot_id))
+    def get_canonical_parent(self, ns):
+        return ns.canonical_parent
+    def get_data(self, ns):
+        return ns.data  
