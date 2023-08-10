@@ -64,14 +64,12 @@ export class Chain extends Namespace<
     this.transformers = {
       devices: (devices) => devices.map((d) => new Device(ableton, d)),
       mixer_device: (mixer) => {
-        console.log(mixer);
         return new MixerDevice(ableton, mixer);
       },
     };
 
     this.cachedProps = {
       devices: true,
-      // mixer_device: true,
     };
   }
 }

@@ -194,7 +194,6 @@ export class Track extends Namespace<
         clips.map((clip) => new Clip(ableton, clip)),
       color: (c) => new Color(c),
       devices: (devices) => {
-        console.log(devices);
         return devices.map((d) => new Device(ableton, d));
       },
       clip_slots: (clip_slots) =>
