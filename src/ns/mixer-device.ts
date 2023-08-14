@@ -2,10 +2,10 @@ import { Ableton } from "..";
 import { Namespace } from ".";
 import { DeviceParameter, RawDeviceParameter } from "./device-parameter";
 
-// export enum PanningMode {
-//   Stereo,
-//   StereoSplit,
-// }
+export enum PanningMode {
+  Stereo,
+  StereoSplit,
+}
 
 export enum CrossfadeAssignment {
   A,
@@ -14,12 +14,14 @@ export enum CrossfadeAssignment {
 }
 
 export interface GettableProperties {
-  // crossfade_assign: CrossfadeAssignment;
+  crossfade_assign: CrossfadeAssignment;
   crossfader: RawDeviceParameter;
   cue_volume: RawDeviceParameter;
+  left_split_stereo: RawDeviceParameter;
   panning: RawDeviceParameter;
-  // panning_mode: PanningMode;
+  panning_mode: PanningMode;
   sends: RawDeviceParameter[];
+  right_split_stereo: RawDeviceParameter;
   song_tempo: RawDeviceParameter;
   track_activator: RawDeviceParameter;
   volume: RawDeviceParameter;
