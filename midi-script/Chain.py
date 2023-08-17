@@ -5,9 +5,9 @@ from .DeviceParameter import DeviceParameter
 
 
 class Chain (Interface):
-    
+
     @staticmethod
-    def serialize_chain (chain): 
+    def serialize_chain(chain):
         if chain is None:
             return None
         chain_id = Interface.save_obj(chain)
@@ -15,6 +15,7 @@ class Chain (Interface):
             "id": chain_id,
             "name": chain.name
         }
+
     @staticmethod
     def serialize_device(device):
         if device is None:
@@ -27,24 +28,22 @@ class Chain (Interface):
             "type": str(device.type),
             "class_name": device.class_name,
         }
-    @staticmethod
-    def serialize_mixer_device(mixer_device):
-        if mixer_device is None:
-            return None
-        
-        mixer_id = Interface.save_obj(mixer_device)
-        return {"id": mixer_id, "name": 'chainMixer', "volume": mixer_device.volume.value, "panning": mixer_device.panning.value}
-        
+    # @staticmethod
+    # def serialize_mixer_device(mixer_device):
+    #     if mixer_device is None:
+    #         return None
+
+    #     mixer_id = Interface.save_obj(mixer_device)
+    #     return {"id": mixer_id, "name": 'chainMixer', "volume": mixer_device.volume.value, "panning": mixer_device.panning.value}
+
     def __init__(self, c_instance, socket):
-     super(Chain, self).__init__(c_instance, socket)
+        super(Chain, self).__init__(c_instance, socket)
 
     def get_devices(self, ns):
         return map(Chain.serialize_device, ns.devices)
 
     # def get_mixer_device(self, ns):
-    #  return Chain.serialize_mixer_device, ns.mixer_device
-    def get_mixer_device(self, ns):
-        return Chain.serialize_mixer_device, ns.mixer_device
-    
-    def get_sends(self, ns):
-       return map(DeviceParameter.serialize_device_parameter, ns.sends)
+    #     return Chain.serialize_mixer_device, ns.mixer_device
+
+    # def get_sends(self, ns):
+    #     return map(DeviceParameter.serialize_device_parameter, ns.sends)
