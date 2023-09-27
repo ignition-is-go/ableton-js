@@ -68,8 +68,8 @@ export class Chain extends Namespace<
       },
     };
 
-    this.cachedProps = {
-      devices: true,
-    };
+    // this.cachedProps = {
+    //   devices: true,
+    // };
   }
 }
