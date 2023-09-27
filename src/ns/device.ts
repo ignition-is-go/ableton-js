@@ -67,7 +67,6 @@ export class Device extends Namespace<
     this.transformers = {
       parameters: (ps) => ps.map((p) => new DeviceParameter(ableton, p)),
       chains: (cs) => {
-        console.log(cs);
         return cs.map((c) => new Chain(ableton, c));
       },
       return_chains: (cs) => cs.map((c) => new Chain(ableton, c)),
