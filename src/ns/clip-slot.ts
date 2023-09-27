@@ -2,6 +2,7 @@ import { Ableton } from "..";
 import { Namespace } from ".";
 import { Color } from "../util/color";
 import { Clip, RawClip } from "./clip";
+import { Track, RawTrack } from "./track";
 
 export enum PlayingStatus {
   Stopped = "stopped",
@@ -22,6 +23,7 @@ export interface GettableProperties {
   is_triggered: boolean;
   playing_status: PlayingStatus;
   will_record_on_start: boolean;
+  canonical_parent: Track;
 }
 
 export interface TransformedProperties {
@@ -42,6 +44,7 @@ export interface ObservableProperties {
   has_stop_button: boolean;
   is_triggered: boolean;
   playing_status: PlayingStatus;
+  canonical_parent: RawTrack;
 }
 
 export interface RawClipSlot {

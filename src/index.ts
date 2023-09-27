@@ -1,6 +1,7 @@
 import os from "os";
 import path from "path";
 import dgram from "dgram";
+import { truncate } from "lodash";
 import { EventEmitter } from "events";
 import { v4 } from "uuid";
 import semver from "semver";
@@ -147,7 +148,7 @@ export class Ableton extends EventEmitter implements ConnectionEventEmitter {
   private serverPortFile: string;
   private logger: Logger | undefined;
   private clientState: "closed" | "starting" | "started" = "closed";
-  private cancelDisconnectEvent = false;
+  private cancelDisconnectEvents: Array<() => unknown> = [];
 
   private _pingTable: { [k: string]: number } = {};
 
@@ -224,7 +225,7 @@ export class Ableton extends EventEmitter implements ConnectionEventEmitter {
       this.logger?.warn(
         "Tried calling start, but client is already " + this.clientState,
       );
-      return;
+      return this.waitForConnection();
     }
 
     this.clientState = "starting";
@@ -235,35 +236,25 @@ export class Ableton extends EventEmitter implements ConnectionEventEmitter {
     this.client.addListener("listening", async () => {
       const port = this.client?.address().port;
       this.logger?.info("Client is bound and listening", { port });
-      // Write used port to a file so Live can read from it
+
+      // Write used port to a file so Live can read from it on startup
       await writeFile(this.clientPortFile, String(port));
     });
 
-    try {
-      // Try binding to the port that was used last for better start performance
-      this.logger?.info("Checking if a stored port exists", {
-        file: this.clientPortFile,
-      });
-      const clientPort = await readFile(this.clientPortFile);
-      const port = Number(clientPort.toString());
-      this.logger?.info("Trying to bind to the most recent port", { port });
-      this.client.bind(port, "127.0.0.1");
-    } catch (error) {
-      this.logger?.info(
-        "Couldn't bind to last port, binding to any free port instead",
-        { error },
-      );
-      this.client.bind(undefined, "127.0.0.1");
-    }
+    this.client.bind(undefined, "127.0.0.1");
 
     // Wait for the server port file to exist
-    await new Promise<void>(async (res) => {
+    const sentPort = await new Promise<boolean>(async (res) => {
       try {
         const serverPort = await readFile(this.serverPortFile);
         this.serverPort = Number(serverPort.toString());
         this.logger?.info("Server port:", { port: this.serverPort });
-        res();
-      } catch (e) {}
+        res(false);
+      } catch (e) {
+        this.logger?.info(
+          "Server doesn't seem to be online yet, waiting for it to go online...",
+        );
+      }
 
       // Set up a watcher in case the server port changes
       watchFile(this.serverPortFile, async (curr) => {
@@ -274,12 +265,35 @@ export class Ableton extends EventEmitter implements ConnectionEventEmitter {
           if (!isNaN(newPort) && newPort !== this.serverPort) {
             this.logger?.info("Server port changed:", { port: newPort });
             this.serverPort = Number(serverPort.toString());
+
+            if (this.client) {
+              try {
+                const port = this.client.address().port;
+                this.logger?.info("Sending port to Live:", { port });
+                await this.setProp("internal", "", "client_port", port);
+                res(true);
+                return;
+              } catch (e) {
+                this.logger?.info("Sending port to Live failed", { e });
+              }
+            }
           }
 
-          res();
+          res(false);
         }
       });
     });
+
+    // Send used port to Live in case the plugin is already started
+    if (!sentPort) {
+      try {
+        const port = this.client.address().port;
+        this.logger?.info("Sending port to Live:", { port });
+        await this.setProp("internal", "", "client_port", port);
+      } catch (e) {
+        this.logger?.info("Live doesn't seem to be loaded yet, waiting...");
+      }
+    }
 
     this.logger?.info("Checking connection...");
     const connection = this.waitForConnection();
@@ -299,15 +313,27 @@ export class Ableton extends EventEmitter implements ConnectionEventEmitter {
     this.handleConnect("start");
 
     const heartbeat = async () => {
+      // Add a cancel function to the array of heartbeats
+      let canceled = false;
+      const cancel = () => {
+        canceled = true;
+        this.logger?.debug("Cancelled heartbeat");
+      };
+      this.cancelDisconnectEvents.push(cancel);
+
       try {
         await this.internal.get("ping");
         this.handleConnect("heartbeat");
       } catch (e) {
-        if (!this.cancelDisconnectEvent) {
+        // If the heartbeat has been canceled, don't emit a disconnect event
+        if (!canceled && this._isConnected) {
+          this.logger?.warn("Heartbeat failed:", { error: e, canceled });
           this.handleDisconnect("heartbeat");
         }
       } finally {
-        this.cancelDisconnectEvent = false;
+        this.cancelDisconnectEvents = this.cancelDisconnectEvents.filter(
+          (e) => e !== cancel,
+        );
       }
     };
 
@@ -418,7 +444,7 @@ export class Ableton extends EventEmitter implements ConnectionEventEmitter {
     if (data.event === "connect") {
       // If some heartbeat ping from the old connection is still pending,
       // cancel it to prevent a double disconnect/connect event.
-      this.cancelDisconnectEvent = true;
+      this.cancelDisconnectEvents.forEach((cancel) => cancel());
 
       if (data.data?.port && data.data?.port !== this.serverPort) {
         this.logger?.info("Got new server port via connect:", {
@@ -459,7 +485,7 @@ export class Ableton extends EventEmitter implements ConnectionEventEmitter {
       const timeout = this.options?.commandTimeoutMs ?? 2000;
 
       const timeoutId = setTimeout(() => {
-        const arg = JSON.stringify(command.args);
+        const arg = truncate(JSON.stringify(command.args), { length: 100 });
         const cls = command.nsid
           ? `${command.ns}(${command.nsid})`
           : command.ns;
@@ -653,9 +679,7 @@ export class Ableton extends EventEmitter implements ConnectionEventEmitter {
 
     const buffer = deflateSync(Buffer.from(msg));
 
-    // Based on this thread, 7500 bytes seems like a safe value
-    // https://stackoverflow.com/questions/22819214/udp-message-too-long
-    const byteLimit = 7500;
+    const byteLimit = this.client.getSendBufferSize() - 1;
     const chunks = Math.ceil(buffer.byteLength / byteLimit);
 
     // Split the message into chunks if it becomes too large

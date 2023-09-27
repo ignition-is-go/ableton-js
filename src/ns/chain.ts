@@ -70,7 +70,6 @@ export class Chain extends Namespace<
 
     this.cachedProps = {
       devices: true,
-      // mixer_device: true,
     };
   }
 }

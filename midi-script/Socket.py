@@ -19,8 +19,8 @@ def split_by_n(seq, n):
 server_port_file = "ableton-js-server.port"
 client_port_file = "ableton-js-client.port"
 
-client_port_path = os.path.join(tempfile.gettempdir(), client_port_file)
 server_port_path = os.path.join(tempfile.gettempdir(), server_port_file)
+client_port_path = os.path.join(tempfile.gettempdir(), client_port_file)
 
 
 class Socket(object):
@@ -37,21 +37,21 @@ class Socket(object):
         self.input_handler = handler
         self._server_addr = ("127.0.0.1", 0)
         self._client_addr = ("127.0.0.1", 39031)
-        self._port_file_last_modified = 0
         self._last_error = ""
         self._socket = None
 
         self.read_remote_port()
         self.init_socket(True)
 
-        self.file_timer = Live.Base.Timer(callback=self.read_remote_port,
-                                          interval=1000, repeat=True)
-        self.file_timer.start()
-
     def log_once(self, msg):
         if self._last_error != msg:
             self._last_error = msg
             self.log_message(msg)
+
+    def set_client_port(self, port):
+        self.log_message("Setting client port: ", str(port))
+        self.show_message("Client connected on port " + str(port))
+        self._client_addr = ("127.0.0.1", int(port))
 
     def read_last_server_port(self):
         try:
@@ -69,16 +69,7 @@ class Socket(object):
         '''Reads the port our client is listening on'''
 
         try:
-            file = os.stat(client_port_path)
-
-            print("Client port file modified: " + str(file.st_mtime) +
-                  " – last: " + str(self._port_file_last_modified))
-
-            if file.st_mtime > self._port_file_last_modified:
-                self._port_file_last_modified = file.st_mtime
-            else:
-                # If the file hasn't changed, don't try to open it
-                return
+            os.stat(client_port_path)
         except Exception as e:
             self.log_once("Couldn't stat remote port file: " + str(e.args))
             return
@@ -101,8 +92,8 @@ class Socket(object):
 
     def shutdown(self):
         self.log_message("Shutting down...")
-        self.file_timer.stop()
         self._socket.close()
+        self._socket = None
 
     def init_socket(self, try_stored=False):
         self.log_message(
@@ -122,6 +113,12 @@ class Socket(object):
             self._socket.setblocking(0)
             self._socket.bind(self._server_addr)
             port = self._socket.getsockname()[1]
+
+            # Get the chunk limit of the socket, minus 1 for the ordering byte
+            self._chunk_limit = self._socket.getsockopt(
+                socket.SOL_SOCKET, socket.SO_SNDBUF) - 1
+
+            self.log_message("Chunk limit: " + str(self._chunk_limit))
 
             # Write the chosen port to a file
             try:
@@ -156,14 +153,14 @@ class Socket(object):
     def _sendto(self, msg):
         '''Send a raw message to the client, compressed and chunked, if necessary'''
         compressed = zlib.compress(msg.encode("utf8")) + b'\n'
-        # Based on this thread, 7500 bytes seems like a safe value
-        # https://stackoverflow.com/questions/22819214/udp-message-too-long
-        limit = 7500
 
-        if len(compressed) < limit:
+        if self._socket == None:
+            return
+
+        if len(compressed) < self._chunk_limit:
             self._socket.sendto(b'\xFF' + compressed, self._client_addr)
         else:
-            chunks = list(split_by_n(compressed, limit))
+            chunks = list(split_by_n(compressed, self._chunk_limit))
             count = len(chunks)
             for i, chunk in enumerate(chunks):
                 count_byte = struct.pack("B", i if i + 1 < count else 255)
@@ -194,7 +191,7 @@ class Socket(object):
             buffer = bytes()
             num_messages = 0
             while 1:
-                data = self._socket.recv(8192)
+                data = self._socket.recv(65536)
                 if len(data) and self.input_handler:
                     buffer += data[1:]
                     num_messages += 1
