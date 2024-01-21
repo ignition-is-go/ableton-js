@@ -55,7 +55,10 @@ export interface EventListener {
 }
 
 export class TimeoutError extends Error {
-  constructor(public message: string, public payload: Command) {
+  constructor(
+    public message: string,
+    public payload: Command,
+  ) {
     super(message);
   }
 }
@@ -118,6 +121,16 @@ export interface AbletonOptions {
    * `console`, log messages are printed to the standard output.
    */
   logger?: Logger;
+
+  /**
+   * Called when the client connects to Live for the first time.
+   */
+  onConnected?: () => void;
+
+  /**
+   * Called when the client disconnects from Live.
+   */
+  onDisconnected?: () => void;
 }
 
 export class Ableton extends EventEmitter implements ConnectionEventEmitter {
@@ -184,6 +197,7 @@ export class Ableton extends EventEmitter implements ConnectionEventEmitter {
       this._isConnected = true;
       this.logger?.info("Live connected", { type });
       this.emit("connect", type);
+      this.options?.onConnected?.();
     }
   }
 
@@ -195,6 +209,7 @@ export class Ableton extends EventEmitter implements ConnectionEventEmitter {
       this.msgMap.clear();
       this.logger?.info("Live disconnected", { type });
       this.emit("disconnect", type);
+      this.options?.onDisconnected?.();
     }
   }
 
@@ -367,8 +382,8 @@ export class Ableton extends EventEmitter implements ConnectionEventEmitter {
     }
 
     if (this.client) {
-      const closePromise = new Promise((res) =>
-        this.client?.once("close", res),
+      const closePromise = new Promise(
+        (res) => this.client?.once("close", res),
       );
       this.client.close();
       await closePromise;
